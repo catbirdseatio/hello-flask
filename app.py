@@ -27,4 +27,4 @@ def display_blog_post(post_id):
 
 @app.get("/about")
 def about():
-    return "<h2>About this application...</h2>"
+    return render_template("about.html")
