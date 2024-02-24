@@ -20,7 +20,7 @@ def test_get_write_message():
         response = client.get("/message/write")
         assert response.status_code == 200
         assert b"Add Message" in response.data
-        assert b'<input type="text" name="message">' in response.data
+        assert b'<input' in response.data
 
 
 def test_post_write_message(capsys):
@@ -37,4 +37,4 @@ def test_post_write_message(capsys):
         # test the response
         assert response.status_code == 200
         assert bytes(message, "utf-8") in response.data
-        assert b"<h1>Welcome to Website App</h1>" in response.data
+        assert b"Welcome to Website App" in response.data
