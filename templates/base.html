@@ -1,17 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flask Website</title>
-</head>
-<body>
-    <header>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/bulma.min.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css')}}"
+    />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/x-icon">
+  </head>
+  <body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item is-size-3" href="{{ url_for('index')}}">
+          Flask App
+        </a>
+
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navMenu"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <a class="navbar-item" href="{{ url_for('index')}}"> Home </a>
+          <a class="navbar-item" href="{{ url_for('write_message')}}">Message</a>
+        </div>
+      </div>
+    </nav>
+    <!-- <header>
         <h1>Flask Website</h1>
         <a href="{{ url_for('write_message') }}">Write a New Message</a>
-    </header>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-</body>
+    </header> -->
+    {% block content %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/index.js')}}"></script>
+  </body>
 </html>

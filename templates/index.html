@@ -1,7 +1,30 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<h1>Welcome to Website App</h1>
-<p>The message of the day: <blockquote>{{ session["message"]}}</blockquote></p>
-<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus laudantium iusto, impedit autem error minima harum fugiat doloribus provident est vel. Incidunt nulla blanditiis numquam commodi quos facere voluptatibus ea.</p>
+{% extends 'base.html' %} {% block content %}
+<section class="hero is-fullheight is-link">
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <p class="title">Welcome to Website App</p>
+      <p class="subtitle">Made with Flask</p>
+    </div>
+  </div>
+</section>
+<div class="section">
+  <div class="container">
+    <article class="message is-info">
+      <div class="message-header">
+        <p>Current Message</p>
+      </div>
+      <blockquote class="message-body is-size-4">
+        {{ session["message"]}}
+      </blockquote>
+    </article>
+    <section class="section">
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellendus
+        laudantium iusto, impedit autem error minima harum fugiat doloribus
+        provident est vel. Incidunt nulla blanditiis numquam commodi quos facere
+        voluptatibus ea.
+      </p>
+    </section>
+  </div>
+</div>
 {% endblock %}
