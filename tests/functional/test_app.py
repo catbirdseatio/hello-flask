@@ -1,8 +1,7 @@
 from app import app
 
 
-def test_index_page():
-    with app.test_client() as client:
+def test_index_page(client):
         response = client.get("/")
         assert response.status_code == 200
         assert b"Welcome to Website App" in response.data
