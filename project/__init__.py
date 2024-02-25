@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
-from .extensions import db
+from .extensions import db, db_migration
 
 
 load_dotenv()
@@ -22,11 +22,11 @@ def register_error_pages(app):
         return render_template('404.html'), 404
     
     @app.errorhandler(405)
-    def page_not_found(e):
+    def method_not_allowed(e):
         return render_template('405.html'), 405
 
     @app.errorhandler(403)
-    def page_not_found(e):
+    def not_permitted(e):
         return render_template('403.html'), 403
     
     @app.errorhandler(500)
@@ -36,6 +36,7 @@ def register_error_pages(app):
 
 def initialize_extensions(app):
     db.init_app(app)
+    db_migration.init_app(app, db)
 
 
 # Application Factory Pattern

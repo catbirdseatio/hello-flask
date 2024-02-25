@@ -1,4 +1,13 @@
-from flask import current_app, render_template, redirect, flash, url_for, session, request, abort
+from flask import (
+    current_app,
+    render_template,
+    redirect,
+    flash,
+    url_for,
+    session,
+    request,
+    abort,
+)
 
 from . import pages_blueprint
 from ..models import Message, db
@@ -12,18 +21,15 @@ def index():
     return render_template("pages/index.html", message=message)
 
 
-@pages_blueprint.route("/message/write", methods=['GET','POST'])
+@pages_blueprint.route("/message/write", methods=["GET", "POST"])
 def write_message():
     if request.method == "POST":
-        try:
-            message = request.form.get("message")
-            new_message = Message(message=message)
-            db.session.add(new_message)
-            db.session.commit()
-            flash("Message updated.", "info")
-            return redirect(url_for("pages.index"))
-        except Exception as e:
-            flash(e, "danger")
+        message = request.form.get("message")
+        new_message = Message(message=message)
+        db.session.add(new_message)
+        db.session.commit()
+        flash("Message updated.", "info")
+        return redirect(url_for("pages.index"))
     return render_template("pages/add_message.html")
 
 
@@ -31,6 +37,12 @@ def write_message():
 def about():
     return render_template("pages/about.html")
 
+
 @pages_blueprint.get("/admin")
 def admin():
     abort(403)
+
+
+@pages_blueprint.get("/error")
+def error():
+    abort(500)
