@@ -6,3 +6,6 @@ __pycache__/
 test.db
 app.db
 app.db
+.coverage
+.pytest_cache
+.vscode
