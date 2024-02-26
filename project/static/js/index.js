@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const deleteButtons =
     document.querySelectorAll(".notification .delete") || [];
   const message = document.querySelector("blockquote.message-body");
-  console.log(message)
+  
   deleteButtons.forEach(($delete) => {
     const $notification = $delete.parentNode;
 
@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   if (message) {
-    message.scrollIntoView();
+    console.log(message)
+    message.scrollIntoView({behavior: "smooth"});
   }
 });
