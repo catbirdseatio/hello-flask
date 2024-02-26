@@ -19,4 +19,13 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "."
           target: ${{ secrets.TARGET_DIR }}
-      
+      - name: restart the gunicorn server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          # port in secrets does not work for deploy; hard-coded port works
+          port: 22
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "${{ secrets.SUDO_PASSWORD}}" | sudo -S systemctl restart flask
