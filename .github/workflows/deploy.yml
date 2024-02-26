@@ -17,4 +17,4 @@ jobs:
 
       - name: Deploy code to remote server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_ARGS }} 'cd ${{ secrets.TARGET_DIR }} && git pull origin main'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_ARGS }} 'cd ${{ secrets.TARGET_DIR }} && touch green.txt'
