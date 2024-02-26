@@ -1,6 +1,6 @@
 import pytest
 
-from app import app
+from wsgi import app
 
 
 def test_index_page(client):
