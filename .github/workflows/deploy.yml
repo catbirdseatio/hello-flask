@@ -18,7 +18,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "."
           target: ${{ secrets.TARGET_DIR }}
-      - name: Migrate database
+      - name: Install requirements
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
