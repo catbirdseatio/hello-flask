@@ -31,3 +31,14 @@ def message():
 def new_user():
     user = User("roderick@email.com", "testpass1234")
     return user
+
+
+@pytest.fixture(scope="module")
+def db_test_user(new_user):
+    db.session.add(new_user)
+    db.session.commit()
+
+    yield new_user
+
+    db.session.delete(new_user)
+    db.session.commit()

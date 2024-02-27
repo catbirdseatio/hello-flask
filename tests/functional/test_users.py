@@ -23,16 +23,11 @@ class TestRegistration:
         assert b"Thanks for registering, rod@example.com" not in response.data
         assert b"This field is required." in response.data
 
-    def test_post_registration_page_fail_duplicate_user(self, client):
-        client.post(
-            "/users/register",
-            data={"email": "rod@example.com", "password": None},
-            follow_redirects=True,
-        )
+    def test_post_registration_page_fail_duplicate_user(self, client, db_test_user):
         response = client.post(
             "/users/register",
-            data={"email": "rod@example.com", "password": None},
+            data={"email": "roderick@email.com", "password": "testpass1234"},
             follow_redirects=True,
         )
         assert response.status_code == 200
-        assert "rod@example.com already exists."
+        assert b"roderick@email.com already exists." in response.data
