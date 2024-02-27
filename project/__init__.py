@@ -4,6 +4,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
+from .models import Message
 from .extensions import db, db_migration
 
 
@@ -12,8 +13,10 @@ load_dotenv()
 
 def register_blueprints(app):
     from project.pages import pages_blueprint
+    from project.users import users_blueprint
 
     app.register_blueprint(pages_blueprint, url_prefix="/")
+    app.register_blueprint(users_blueprint, url_prefix="/users")
 
 
 def register_error_pages(app):
@@ -49,4 +52,8 @@ def create_app():
     register_blueprints(app)
     register_error_pages(app)
 
+    # shell context
+    @app.shell_context_processor
+    def ctx():
+        return {"app": app, "db": db, "Message": Message}
     return app

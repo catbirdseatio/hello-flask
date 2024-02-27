@@ -12,6 +12,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL',
                                         default=f"sqlite:///{os.path.join(BASEDIR, 'app.db')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_ENABLED = True
 
 
 class ProductionConfig(Config):
@@ -26,4 +27,5 @@ class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL',
                                         default=f"sqlite:///{os.path.join(BASEDIR, 'test.db')}")
+    WTF_CSRF_ENABLED = False
 
