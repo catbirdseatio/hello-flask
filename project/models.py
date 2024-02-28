@@ -1,6 +1,7 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column, validates
 from werkzeug.security import generate_password_hash, check_password_hash
+import flask_login
 
 from .extensions import db
 
@@ -18,7 +19,7 @@ class Message(db.Model):
         return f"Message: {self.message}"
 
 
-class User(db.Model):
+class User(flask_login.UserMixin, db.Model):
     __tablename__ = "users"
 
     id = mapped_column(Integer(), primary_key=True)

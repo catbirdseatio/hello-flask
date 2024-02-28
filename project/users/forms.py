@@ -6,12 +6,13 @@ from project import db
 from project.models import User
 
 
+EMAIL_LENGTH = {"min": 6, "max": 120}
+
+
 class RegistrationForm(FlaskForm):
-    email = StringField(
-        "Email", validators=[DataRequired(), Email(), Length(min=6, max=120)]
-    )
+    email = StringField("Email", validators=[DataRequired(), Email(), Length(**EMAIL_LENGTH)])
     password = PasswordField(
-        "Password", validators=[DataRequired(), Length(min=5, max=40)]
+        "Password", validators=[DataRequired(), Length(**EMAIL_LENGTH)]
     )
     submit = SubmitField("Register")
 
@@ -19,3 +20,11 @@ class RegistrationForm(FlaskForm):
         user = db.session.scalar(sa.select(User).where(User.email == email.data))
         if user is not None:
             raise ValidationError(f"{email.data} already exists.")
+
+
+class LoginForm(FlaskForm):
+    email = StringField(
+        "Email", validators=[DataRequired(), Email(), Length(**EMAIL_LENGTH)]
+    )
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Login")

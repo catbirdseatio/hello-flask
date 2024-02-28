@@ -5,10 +5,11 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
 from .models import Message
-from .extensions import db, db_migration
+from .extensions import db, db_migration, login
 
 
 load_dotenv()
+login.login_view = "users.login"
 
 
 def register_blueprints(app):
@@ -40,6 +41,14 @@ def register_error_pages(app):
 def initialize_extensions(app):
     db.init_app(app)
     db_migration.init_app(app, db)
+    login.init_app(app)
+
+    from project.models import User
+
+    @login.user_loader
+    def load_user(user_id):
+        query = db.select(User).where(User.id == int(user_id))
+        return db.session.execute(query).scalar_one()
 
 
 # Application Factory Pattern

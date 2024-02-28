@@ -42,3 +42,14 @@ def db_test_user(new_user):
 
     db.session.delete(new_user)
     db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def log_in_default_user(client, db_test_user):
+    client.post(
+        "/users/login",
+        data={"email": "roderick@email.com", "password": "testpass1234"},
+        follow_redirects=True,
+    )
+    yield
+    client.get("/users/logout", follow_redirects=True)
