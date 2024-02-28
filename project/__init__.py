@@ -22,19 +22,19 @@ def register_blueprints(app):
 def register_error_pages(app):
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template('404.html'), 404
-    
+        return render_template("404.html"), 404
+
     @app.errorhandler(405)
     def method_not_allowed(e):
-        return render_template('405.html'), 405
+        return render_template("405.html"), 405
 
     @app.errorhandler(403)
     def not_permitted(e):
-        return render_template('403.html'), 403
-    
+        return render_template("403.html"), 403
+
     @app.errorhandler(500)
     def page_not_found(e):
-        return render_template('500.html'), 500
+        return render_template("500.html"), 500
 
 
 def initialize_extensions(app):
@@ -56,4 +56,5 @@ def create_app():
     @app.shell_context_processor
     def ctx():
         return {"app": app, "db": db, "Message": Message}
+
     return app
