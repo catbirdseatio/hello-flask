@@ -48,8 +48,7 @@ def initialize_extensions(app):
 
     @login.user_loader
     def load_user(user_id): # pragma: no cover
-        query = db.select(User).where(User.id == int(user_id))
-        return db.session.execute(query).scalar_one()
+        return db.session.get(User, int(user_id))
 
 
 # Application Factory Pattern

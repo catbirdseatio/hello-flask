@@ -1,13 +1,29 @@
+from datetime import datetime
 from threading import Thread
 from flask import render_template, request, flash, redirect, url_for, copy_current_request_context, current_app
 from flask_login import login_user, current_user, login_required, logout_user
+from itsdangerous import URLSafeTimedSerializer
+from itsdangerous.exc import BadSignature
 from flask_mail import Message
-from sqlalchemy.exc import IntegrityError
 
 from project import db, mail
 from project.models import User
 from . import users_blueprint
 from .forms import RegistrationForm, LoginForm
+
+
+def generate_confirmation_email(user_email):
+    confirmation_serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    
+    confirm_url = url_for('users.confirm_email', token=confirmation_serializer.dumps(
+        user_email, salt='email-confirmation-salt'
+    ), _external=True)
+
+    return Message(subject='Confirm Your Email Address - Flask App',
+                   html=render_template('users/email/email_confirmation.html', confirm_url=confirm_url),
+                   recipients=[user_email])
+
+
 
 @users_blueprint.route("/register", methods=["POST", 'GET'])
 def register():
@@ -25,9 +41,7 @@ def register():
                 with current_app.app_context():
                     mail.send(message)
 
-            msg = Message(subject="Registration - Flask App",
-                        body="THanks for registering with the Flask App",
-                        recipients=[form.email.data])
+            msg = generate_confirmation_email(form.email.data)
 
             email_thread = Thread(target=send_email, args=[msg])
             email_thread.start()
@@ -61,4 +75,25 @@ def login():
 def logout():
     logout_user()
     flash("You have logged out.")
+    return redirect(url_for("pages.index"))
+
+@users_blueprint.route("/confirm/<token>")
+def confirm_email(token):
+    try:
+        confirm_serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        email = confirm_serializer.loads(token, salt='email-confirmation-salt', max_age=3600)
+    except BadSignature:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+        return redirect(url_for('users.login'))
+
+    query = db.select(User).where(User.email == email)
+    user = db.session.execute(query).scalar_one()
+    if user.email_confirmed:
+        flash("Account already confirmed. Please login.", "info")
+    else:
+        user.email_confirmed = True
+        user.email_confirmed_on = datetime.now()
+        db.session.add(user)
+        db.session.commit()
+        flash("Thank you for confirming your email address!", "success")
     return redirect(url_for("pages.index"))
