@@ -1,8 +1,10 @@
-from flask import render_template, request, flash, redirect, url_for
+from threading import Thread
+from flask import render_template, request, flash, redirect, url_for, copy_current_request_context, current_app
 from flask_login import login_user, current_user, login_required, logout_user
+from flask_mail import Message
 from sqlalchemy.exc import IntegrityError
 
-from project import db
+from project import db, mail
 from project.models import User
 from . import users_blueprint
 from .forms import RegistrationForm, LoginForm
@@ -17,7 +19,20 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash(f"Thanks for registering, {form.email.data}", "success")
-            return redirect(url_for("pages.index"))
+            
+            @copy_current_request_context
+            def send_email(message):
+                with current_app.app_context():
+                    mail.send(message)
+
+            msg = Message(subject="Registration - Flask App",
+                        body="THanks for registering with the Flask App",
+                        recipients=[form.email.data])
+
+            email_thread = Thread(target=send_email, args=[msg])
+            email_thread.start()
+
+            return redirect(url_for("users.login"))
         else:
             flash("Error in form data.", "danger")
     return render_template("users/registration.html", form=form)

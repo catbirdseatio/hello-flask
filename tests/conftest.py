@@ -7,8 +7,9 @@ from project.models import Message, User
 
 @pytest.fixture(scope="module")
 def app():
-    os.environ["CONFIG_TYPE"] = "config.TestingConfig"
     _app = create_app()
+    os.environ["CONFIG_TYPE"] = "config.TestingConfig"
+    _app.extensions['mail'].suppress = True
 
     with _app.app_context():
         db.create_all()

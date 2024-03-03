@@ -1,6 +1,7 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import mapped_column, validates
 from werkzeug.security import generate_password_hash, check_password_hash
+
 import flask_login
 
 from .extensions import db

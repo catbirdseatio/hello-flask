@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
 from .models import Message
-from .extensions import db, db_migration, login
+from .extensions import db, db_migration, login, mail
 
 
 load_dotenv()
@@ -42,11 +42,12 @@ def initialize_extensions(app):
     db.init_app(app)
     db_migration.init_app(app, db)
     login.init_app(app)
+    mail.init_app(app)
 
     from project.models import User
 
     @login.user_loader
-    def load_user(user_id):
+    def load_user(user_id): # pragma: no cover
         query = db.select(User).where(User.id == int(user_id))
         return db.session.execute(query).scalar_one()
 
@@ -61,9 +62,9 @@ def create_app():
     register_blueprints(app)
     register_error_pages(app)
 
-    # shell context
+   
     @app.shell_context_processor
-    def ctx():
+    def ctx(): # pragma: no cover
         return {"app": app, "db": db, "Message": Message}
 
     return app
