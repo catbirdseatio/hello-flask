@@ -21,12 +21,15 @@ from . import users_blueprint
 from .forms import RegistrationForm, LoginForm, PasswordResetForm, PasswordForm
 
 
+CONFIRMATION_EMAIL_SALT = 'email-confirmation-salt'
+PASSWORD_RESET_SALT = "password-reset-salt"
+
 def generate_confirmation_email(user_email):
     confirmation_serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
 
     confirm_url = url_for(
         "users.confirm_email",
-        token=confirmation_serializer.dumps(user_email, salt="email-confirmation-salt"),
+        token=confirmation_serializer.dumps(user_email, salt=CONFIRMATION_EMAIL_SALT),
         _external=True,
     )
 
@@ -45,7 +48,7 @@ def generate_password_reset_email(user_email):
     password_reset_url = url_for(
         "users.process_password_reset",
         token=password_reset_serializer.dumps(
-            user_email, salt="email-password_reset-salt"
+            user_email, salt=PASSWORD_RESET_SALT
         ),
         _external=True,
     )
@@ -120,7 +123,7 @@ def confirm_email(token):
     try:
         confirm_serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
         email = confirm_serializer.loads(
-            token, salt="email-confirmation-salt", max_age=3600
+            token, salt=CONFIRMATION_EMAIL_SALT, max_age=3600
         )
     except BadSignature:
         flash("The confirmation link is invalid or has expired.", "danger")
@@ -158,7 +161,8 @@ def password_reset():
             email_thread = Thread(target=send_email, args=[msg])
             email_thread.start()
 
-            flash("Please check your email for a password reset link")
+            flash("Please check your email for a password reset link", "success")
+            return redirect(url_for("pages.index"))
         else:
             flash("Your email must be confirmed before attempting a password reset.")
         return redirect(url_for("users.password_reset"))
@@ -170,7 +174,7 @@ def process_password_reset(token):
     try:
         confirm_serializer = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
         email = confirm_serializer.loads(
-            token, salt="password-reset-salt", max_age=3600
+            token, salt=PASSWORD_RESET_SALT, max_age=3600
         )
     except BadSignature:
         flash("The password reset link is invalid or has expired.", "danger")
@@ -188,7 +192,7 @@ def process_password_reset(token):
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash("Your password has been updated.")
+        flash("Your password has been updated.", "success")
         return redirect(url_for("users.login"))
 
     return render_template("/users/password_reset_with_token.html", form=form)
