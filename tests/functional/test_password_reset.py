@@ -44,11 +44,11 @@ class TestPasswordReset:
 
         response = client.get(f"/users/process_password_reset/{token}", follow_redirects=True)
         assert response.status_code == 200
-        assert b"Password Reset" in response.data
+        assert b"Reset Password" in response.data
         assert b"New Password" in response.data
         assert b"Submit" in response.data
     
-    def test_get_password_reset_valid_token(self, client):
+    def test_get_password_reset_invalid_token(self, client):
         token = "ReallyBadToken"
 
         response = client.get(f"/users/process_password_reset/{token}", follow_redirects=True)
@@ -75,3 +75,14 @@ class TestPasswordReset:
         assert response.status_code == 200
         assert b"Your password has been updated." not in response.data
         assert b"The password reset link is invalid or has expired."
+    
+    def test_post_password_reset_invalid_email(self, client, db_test_user):
+        # Note: db_test_user fixture needed for app context
+        password_reset_serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        token = password_reset_serializer.dumps('roderick@example.com', 'password-reset-salt')
+
+        response = client.post(f"/users/process_password_reset/{token}",
+                               data={'password': 'FlaskIsTheBestFramework'}, follow_redirects=True)
+        assert response.status_code == 200
+        assert b"Your password has been updated." not in response.data
+        assert b"Invalid email address" in response.data

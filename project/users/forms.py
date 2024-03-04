@@ -46,6 +46,6 @@ class PasswordResetForm(FlaskForm):
 
 class PasswordForm(FlaskForm):
     password = PasswordField(
-        "Password", validators=[DataRequired(), Length(**EMAIL_LENGTH)]
+        "New Password", validators=[DataRequired(), Length(**EMAIL_LENGTH)]
     )
     submit = SubmitField("Submit")
