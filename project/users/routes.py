@@ -2,6 +2,7 @@ from datetime import datetime
 from threading import Thread
 from flask import render_template, request, flash, redirect, url_for, copy_current_request_context, current_app
 from flask_login import login_user, current_user, login_required, logout_user
+import sqlalchemy as sa
 from itsdangerous import URLSafeTimedSerializer
 from itsdangerous.exc import BadSignature
 from flask_mail import Message
@@ -57,16 +58,19 @@ def login():
     if current_user.is_authenticated:
         flash("You are already logged in!")
         return redirect(url_for("pages.index"))
+    
     form = LoginForm()
 
     if form.validate_on_submit():
-        query = db.select(User).where(User.email == form.email.data)
-        user = db.session.execute(query).scalar_one()        
-        if user and user.is_password_correct(form.password.data):
-            login_user(user)
-            flash(f"Thanks for logging in, {current_user.email}", "success")
-            return redirect(url_for("pages.index"))
-        flash("Incorrect Login Credentials.", "danger")
+        user = db.session.scalar(
+            sa.select(User).where(User.email == form.email.data))
+        if user is None or not user.is_password_correct(form.password.data):
+            flash("Incorrect Login Credentials.", "danger")
+            return redirect(url_for("users.login"))
+        login_user(user)
+        flash(f"Thanks for logging in, {current_user.email}", "success")
+        return redirect(url_for("pages.index"))
+        
     return render_template("users/login.html", form=form)
 
 
