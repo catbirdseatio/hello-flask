@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}{{ super() }} - 403{% endblock %}
+
+{% block content %}
+<section class="section has-text-centered">
+    <h2 class="title has-text-danger">Forbidden (404)</h1>
+    <p class="title is-size-4">You do not have permission to access resource.</p>
+    <p><a class="button is-danger" href="{{ url_for('pages.index') }}">Go Back</a></p>
+  </section>
+{% endblock %}
